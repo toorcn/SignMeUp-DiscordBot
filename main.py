@@ -35,13 +35,18 @@ async def joinlist(interaction: discord.Interaction, current_rank: str):
         #if joined
         if (not test.discordIdOnList(discord_username)):
             test.joinList(discord_id, current_rank, discord_username)
-            # await interaction.response.send_message(f'You have joined the list! as #{globalVar.current_row_num_IGN + 3}')
-            message = f'You have joined the list! as #{globalVar.current_row_num_DEF - 1}'
+    #         message = f'You have joined the list! as #{globalVar.current_row_num_DEF - 1}'
+    #     else: 
+    #         message = 'You have already joined the list, to amend your entry first use /unjoin'
+    # else:
+    #     message = 'You have not registered your in-game ID, please use /setign'
+    # await interaction.response.send_message(message)
+            await interaction.response.send_message(f'You have joined the list! as #{globalVar.current_row_num_DEF - 1}')
         else: 
-            message = 'You have already joined the list, to amend your entry first use /unjoin'
+            await interaction.response.send_message('You have already joined the list, to amend your entry first use /unjoin')
     else:
-        message = 'You have not registered your in-game ID, please use /setign'
-    await interaction.response.send_message(message)
+        await interaction.response.send_message('You have not registered your in-game ID, please use /setign')
+    # await interaction.response.send_message(message)
     # check if user has set ign if not, refer
 
 @client.tree.command(name = "setign")
@@ -53,12 +58,19 @@ async def setign(interaction: discord.Interaction, in_game_tag: str):
     if (saveResponse):
         msg = 'You are set!'
     else:
-        msg = 'Changed!'
+        msg = 'Changed! if you have joined a list, please unjoin and join again.'
     await interaction.response.send_message(f"{msg} ign: {in_game_tag} LINK TO id: {discord_id}")
 
-# @client.tree.command(name = "unjoin")
-# async def unjoin(interaction: discord.Interaction):
-#     await interaction.response.send_message(test.showListSigned()) 
+@client.tree.command(name = "unjoin")
+async def unjoin(interaction: discord.Interaction):
+    discord_id = str(interaction.user.id)
+    discord_username = str(interaction.user._user)
+    message = ''
+    if (not test.unjoinFromList(discord_username)):
+        message = 'You have yet to join a list, use /joinlist'
+    else:
+        message = 'You have unjoined!'
+    await interaction.response.send_message(message) 
 #unjoinlist
 
     #save to database
