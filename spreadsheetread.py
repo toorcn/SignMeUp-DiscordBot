@@ -18,17 +18,16 @@ def get_values(spreadsheet_id, range_name):
     try:
         service = build('sheets', 'v4', credentials=creds)
 
-        result = service.spreadsheets().values().get(
-            spreadsheetId=spreadsheet_id, range=range_name).execute()
+        result = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id, range=range_name).execute()
         rows = result.get('values', [])
-        print(f"{len(rows)} rows retrieved")
+        # print(f"{len(rows)} rows retrieved")
         globalVar.row_data = rows
-        return result
+        # return result
+        return rows
     except HttpError as error:
         print(f"An error occurred: {error}")
         return error
 
-def run():
-    if __name__ == '__main__' or __name__ == "spreadsheetread":
-        # Pass: spreadsheet_id, and range_name
-        get_values(SPREADSHEET_ID, "A1:D5")
+def run(sheet_id, sheet_range):
+    # Pass: spreadsheet_id, and range_name
+    return get_values(SPREADSHEET_ID, f"{sheet_id}!" + sheet_range)
