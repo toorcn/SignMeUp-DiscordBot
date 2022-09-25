@@ -50,20 +50,23 @@ async def join(interaction: discord.Interaction, current_rank: str):
         return 
     discord_id = str(interaction.user.id)
     discord_username = str(interaction.user._user)
-    message = ''
-    if (integrator.discordIdExist(discord_id)):
+    # message = ''
+    if (await integrator.discordIdExist(discord_id)):
         #if joined
-        if (not integrator.discordIdOnList(discord_username)):
+        if (not (await integrator.discordIdOnList(discord_username))):
+            # message = f'> You have joined the list! as #{globalVar.current_row_num_DEF - 1}'
             await interaction.response.send_message(f'> You have joined the list! as #{globalVar.current_row_num_DEF - 1}', ephemeral=True)
             await client.get_channel(int(os.getenv('Start_channel_id'))).send(f'> Player count: #{globalVar.current_row_num_DEF - 1}')
 
             integrator.joinList(discord_id, current_rank, discord_username)
             # test if rank is valud
         else: 
+            # message = '> You have already joined the list, to amend your entry first use /unjoin'
             await interaction.response.send_message('> You have already joined the list, to amend your entry first use /unjoin', ephemeral=True)
     else:
+        # message = '> You have not registered your in-game ID, please use /setign <GAME TAG>'
         await interaction.response.send_message('> You have not registered your in-game ID, please use /setign <GAME TAG>', ephemeral=True)
-    # await interaction.response.send_message(message)
+    # await interaction.response.send_message(message, ephemeral=True)
     # check if user has set ign if not, refer
 
 @client.tree.command(name = "setign")
@@ -86,9 +89,11 @@ async def unjoin(interaction: discord.Interaction):
         return 
     discord_username = str(interaction.user._user)
     message = ''
-    if (not integrator.unjoinFromList(discord_username)):
+    if (not (await integrator.unjoinFromList(discord_username))):
+        # await interaction.response.send_message(f'> You have yet to join a list, use /join', ephemeral=True) 
         message = 'You have yet to join a list, use /join'
     else:
+        # await interaction.response.send_message(f'> You have unjoined!', ephemeral=True) 
         message = 'You have unjoined!'
     await interaction.response.send_message(f'> {message}', ephemeral=True) 
 

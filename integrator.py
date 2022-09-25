@@ -61,7 +61,7 @@ def saveIGN(discord_id, in_game_tag):
 def joinList(discord_id, rank, discord_username):
     get_IGN = getIGN(discord_id)
     rank_data = str(rank).split('/')
-    rank_division = str(rank_data[0].upper())[0, 4]
+    rank_division = str(rank_data[0].upper())[:4]
     rank_entry = 0
     rank_tier = 0
     try:
@@ -96,14 +96,14 @@ def joinList(discord_id, rank, discord_username):
         rank_entry = 25
     spreadsheetwrite.run(globalVar.DEF_id, [discord_username, get_IGN, rank, rank_entry])
 
-def discordIdExist(discord_id):
+async def discordIdExist(discord_id):
     temp = getRow(globalVar.IGN_id, discord_id)
     if (temp == -1):
         return False
     else:
         return True
 
-def discordIdOnList(discord_username):
+async def discordIdOnList(discord_username):
     sheet_list = spreadsheetread.run(globalVar.DEF_id, f'A2:D{globalVar.current_row_num_DEF - 1}') 
     for sl in sheet_list:
         try:
@@ -113,7 +113,7 @@ def discordIdOnList(discord_username):
             continue
     return False
 
-def unjoinFromList(discord_username):
+async def unjoinFromList(discord_username):
     row = getRow(globalVar.DEF_id, discord_username)
     if (row == -1):
         return False
