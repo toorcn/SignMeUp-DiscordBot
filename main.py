@@ -23,25 +23,25 @@ async def on_ready():
 
 @client.tree.command(name = "list")
 async def list(interaction: discord.Interaction):
+    if (interaction.channel.name != os.getenv('Channel_name_1')):
+        return 
     await interaction.response.send_message(test.showListSigned())
 
 @client.tree.command(name = "joinlist")
 @app_commands.describe(current_rank = "be honest, for fair play")
 async def joinlist(interaction: discord.Interaction, current_rank: str):
+    if (interaction.channel.name != os.getenv('Channel_name_1')):
+        return 
     discord_id = str(interaction.user.id)
     discord_username = str(interaction.user._user)
     message = ''
     if (test.discordIdExist(discord_id)):
         #if joined
         if (not test.discordIdOnList(discord_username)):
-            test.joinList(discord_id, current_rank, discord_username)
-    #         message = f'You have joined the list! as #{globalVar.current_row_num_DEF - 1}'
-    #     else: 
-    #         message = 'You have already joined the list, to amend your entry first use /unjoin'
-    # else:
-    #     message = 'You have not registered your in-game ID, please use /setign'
-    # await interaction.response.send_message(message)
             await interaction.response.send_message(f'You have joined the list! as #{globalVar.current_row_num_DEF - 1}')
+
+            test.joinList(discord_id, current_rank, discord_username)
+            # test if rank is valud
         else: 
             await interaction.response.send_message('You have already joined the list, to amend your entry first use /unjoin')
     else:
@@ -52,6 +52,8 @@ async def joinlist(interaction: discord.Interaction, current_rank: str):
 @client.tree.command(name = "setign")
 @app_commands.describe(in_game_tag = "FLOPPER#1234")
 async def setign(interaction: discord.Interaction, in_game_tag: str):
+    if (interaction.channel.name != os.getenv('Channel_name_1')):
+        return 
     discord_id = str(interaction.user.id)
     saveResponse = test.saveIGN(discord_id, in_game_tag)
     msg = ''
@@ -63,6 +65,8 @@ async def setign(interaction: discord.Interaction, in_game_tag: str):
 
 @client.tree.command(name = "unjoin")
 async def unjoin(interaction: discord.Interaction):
+    if (interaction.channel.name != os.getenv('Channel_name_1')):
+        return 
     discord_id = str(interaction.user.id)
     discord_username = str(interaction.user._user)
     message = ''

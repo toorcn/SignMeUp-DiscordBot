@@ -17,6 +17,8 @@ def showListSigned():
         for items in row:
             message += f'{items} '
         output += f'{counter}. {message}\n'
+        if (counter == counter + 10):
+            output += '\n'
     print(output)
     return output
 
@@ -54,7 +56,36 @@ def saveIGN(discord_id, in_game_tag):
 
 def joinList(discord_id, rank, discord_username):
     get_IGN = getIGN(discord_id)
-    spreadsheetwrite.run(globalVar.DEF_id, [discord_username, get_IGN, rank, ''])
+    rank_data = str(rank).split('/')
+    rank_division = str(rank_data[0].upper())
+    rank_tier = str(rank_data[1])
+    rank_entry = 0
+    if (rank_division == 'IRON'):
+        rank_entry += 0
+    if (rank_division == 'BRON'):
+        rank_entry += 3
+    if (rank_division == 'SILV'):
+        rank_entry += 6
+    if (rank_division == 'GOLD'):
+        rank_entry += 9
+    if (rank_division == 'PLAT'):
+        rank_entry += 12
+    if (rank_division == 'DIAM'):
+        rank_entry += 15
+    if (rank_division == 'ASCD'):
+        rank_entry += 18
+    if (rank_division == 'IMMO'):
+        rank_entry += 21
+    if (rank_division == 'RADI'):
+        rank_entry += 24
+
+    if (rank_tier == '1'):
+        rank_entry += 1
+    if (rank_tier == '2'):
+        rank_entry += 2
+    if (rank_tier == '3'):
+        rank_entry += 3
+    spreadsheetwrite.run(globalVar.DEF_id, [discord_username, get_IGN, rank, rank_entry])
 
 def discordIdExist(discord_id):
     temp = getRow(globalVar.IGN_id, discord_id)
@@ -95,7 +126,7 @@ def initialize():
     print(f'Default sheet available line: {globalVar.current_row_num_DEF}')
     globalVar.current_row_num_IGN = getLatestRow(globalVar.IGN_id)
     print(f'IGN sheet available line: {globalVar.current_row_num_IGN}')
-    print("Line load complete! Bot is ready!")
+    print("Line load complete! \nBot is ready!")
 
 
 # testing
