@@ -20,7 +20,7 @@ async def on_ready():
         print("Bot is synced!")
         integrator.initialize()
         channel = client.get_channel(int(os.getenv('Start_channel_id')))
-        await channel.send('SignMeUp Alpha (VALORANT) is ready!\n> To join: /join <XXXX/X>\n> - Example: /join DIAM/2\n> To unjoin: /unjoin\n> For more help: /help')
+        await channel.send('SignMeUp Alpha 1.1 (VALORANT) is ready!\n> To join: /join <XXXX/X>\n> - Example: /join DIAM/2\n> To unjoin: /unjoin\n> For more information: /help')
     except Exception as e:
         print(e)
 
@@ -56,9 +56,8 @@ async def join(interaction: discord.Interaction, current_rank: str):
         if (not (await integrator.discordIdOnList(discord_username))):
             # message = f'> You have joined the list! as #{globalVar.current_row_num_DEF - 1}'
             await interaction.response.send_message(f'> You have joined the list! as #{globalVar.current_row_num_DEF - 1}', ephemeral=True)
-            await client.get_channel(int(os.getenv('Start_channel_id'))).send(f'> Player count: #{globalVar.current_row_num_DEF - 1}')
-
-            integrator.joinList(discord_id, current_rank, discord_username)
+            await integrator.joinList(discord_id, current_rank, discord_username)
+            await client.get_channel(int(os.getenv('Start_channel_id'))).send(f'> (JOIN) Player count -> #{integrator.getPlayerCount()}')
             # test if rank is valud
         else: 
             # message = '> You have already joined the list, to amend your entry first use /unjoin'
@@ -96,6 +95,8 @@ async def unjoin(interaction: discord.Interaction):
         # await interaction.response.send_message(f'> You have unjoined!', ephemeral=True) 
         message = 'You have unjoined!'
     await interaction.response.send_message(f'> {message}', ephemeral=True) 
+    await client.get_channel(int(os.getenv('Start_channel_id'))).send(f'> (UNJOIN) Player count -> #{integrator.getPlayerCount()}')
+
 
 # @client.tree.command(name = "setrank")
 # @app_commands.describe(rank = "Iron, Bronze, Silver, Gold, Platinum, Diamond, Ascendant, Immortal", tier = "1, 2, 3")

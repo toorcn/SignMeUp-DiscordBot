@@ -58,42 +58,47 @@ def saveIGN(discord_id, in_game_tag):
         spreadsheetwrite.setRow(globalVar.IGN_id, [discord_id, in_game_tag], getRow(globalVar.IGN_id, discord_id))
         return False
 
-def joinList(discord_id, rank, discord_username):
+async def joinList(discord_id, rank, discord_username):
     get_IGN = getIGN(discord_id)
     rank_data = str(rank).split('/')
     rank_division = str(rank_data[0].upper())[:4]
-    rank_entry = 0
+    rank_entry = -1
     rank_tier = 0
+    skip_add = False
     try:
-        rank_tier = str(rank_data[1]) 
+        rank_tier = str(rank_data[1])[:1]
     except:
         rank_tier
     if (rank_division == 'IRON'):
-        rank_entry += 0
-    if (rank_division == 'BRON'):
-        rank_entry += 3
-    if (rank_division == 'SILV'):
-        rank_entry += 6
-    if (rank_division == 'GOLD'):
-        rank_entry += 9
-    if (rank_division == 'PLAT'):
-        rank_entry += 12
-    if (rank_division == 'DIAM'):
-        rank_entry += 15
-    if (rank_division == 'ASCD'):
-        rank_entry += 18
-    if (rank_division == 'IMMO'):
-        rank_entry += 21
-
-    if (rank_tier == '1'):
         rank_entry += 1
-    if (rank_tier == '2'):
-        rank_entry += 2
-    if (rank_tier == '3'):
-        rank_entry += 3
-    
+    if (rank_division == 'BRON'):
+        rank_entry += 4
+    if (rank_division == 'SILV'):
+        rank_entry += 7
+    if (rank_division == 'GOLD'):
+        rank_entry += 10
+    if (rank_division == 'PLAT'):
+        rank_entry += 13
+    if (rank_division == 'DIAM'):
+        rank_entry += 16
+    if (rank_division == 'ASCE'):
+        rank_entry += 19
+    if (rank_division == 'IMMO'):
+        rank_entry += 22
     if (rank_division == 'RADI'):
-        rank_entry = 25
+        rank_entry = 26
+        skip_add = True
+    if (rank_entry < 0):
+        rank_entry += 1
+        skip_add = True
+
+    if (rank_tier == '1' and skip_add == False):
+        rank_entry += 1
+    if (rank_tier == '2' and skip_add == False):
+        rank_entry += 2
+    if (rank_tier == '3' and skip_add == False):
+        rank_entry += 3
+
     spreadsheetwrite.run(globalVar.DEF_id, [discord_username, get_IGN, rank, rank_entry])
 
 async def discordIdExist(discord_id):
@@ -126,6 +131,18 @@ async def unjoinFromList(discord_username):
         entry = ['UNJOINED', row_data[0][1], row_data[0][2]]
     spreadsheetwrite.setRow(globalVar.DEF_id, entry, row)
     return True
+
+def getPlayerCount():
+    sheet_list = spreadsheetread.run(globalVar.DEF_id, f'A2:D{globalVar.current_row_num_DEF + 1}')
+    counter = 0
+    for sl in sheet_list:
+        try:
+            if (not ('UNJOINED' == str(sl[0]) or '' == str(sl[0]))):
+                counter += 1
+        except:
+            print('continue')
+            continue
+    return counter
 
 def initialize():
     googleAuth.authenticate()
