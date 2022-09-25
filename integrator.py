@@ -61,7 +61,7 @@ def saveIGN(discord_id, in_game_tag):
 def joinList(discord_id, rank, discord_username):
     get_IGN = getIGN(discord_id)
     rank_data = str(rank).split('/')
-    rank_division = str(rank_data[0].upper())
+    rank_division = str(rank_data[0].upper())[0, 4]
     rank_entry = 0
     rank_tier = 0
     try:

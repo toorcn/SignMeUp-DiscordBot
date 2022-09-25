@@ -84,7 +84,6 @@ async def setign(interaction: discord.Interaction, in_game_tag: str):
 async def unjoin(interaction: discord.Interaction):
     if (interaction.channel.name != os.getenv('Channel_name_1')):
         return 
-    discord_id = str(interaction.user.id)
     discord_username = str(interaction.user._user)
     message = ''
     if (not integrator.unjoinFromList(discord_username)):
