@@ -84,8 +84,6 @@ def joinList(discord_id, rank, discord_username):
         rank_entry += 18
     if (rank_division == 'IMMO'):
         rank_entry += 21
-    if (rank_division == 'RADI'):
-        rank_entry += 24
 
     if (rank_tier == '1'):
         rank_entry += 1
@@ -93,6 +91,9 @@ def joinList(discord_id, rank, discord_username):
         rank_entry += 2
     if (rank_tier == '3'):
         rank_entry += 3
+    
+    if (rank_division == 'RADI'):
+        rank_entry = 25
     spreadsheetwrite.run(globalVar.DEF_id, [discord_username, get_IGN, rank, rank_entry])
 
 def discordIdExist(discord_id):
