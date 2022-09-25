@@ -28,7 +28,7 @@ def batch_update_values(spreadsheet_id, range_name, value_input_option, values):
             'data': data
         }
         result = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id, body=body).execute()
-        print(f"{(result.get('totalUpdatedCells'))} cells updated.")
+        print(f"{(result.get('totalUpdatedCells'))} cells updated. in {range_name}.")
         return result
     except HttpError as error:
         print(f"An error occurred: {error}")
