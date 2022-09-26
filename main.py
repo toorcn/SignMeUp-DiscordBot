@@ -20,7 +20,7 @@ async def on_ready():
         print("Bot is synced!")
         integrator.initialize()
         channel = client.get_channel(int(os.getenv('Start_channel_id')))
-        await channel.send('SignMeUp Alpha 1.1 (VALORANT) is ready!\n> To join: /join <XXXX/X>\n> - Example: /join DIAM/2\n> To unjoin: /unjoin\n> For more information: /help')
+        await channel.send('SignMeUp Alpha 1.2 (VALORANT) is ready!\n> To join: /join <XXXX/X>\n> - Example: /join DIAM/2\n> To unjoin: /unjoin\n> For more information: /help')
     except Exception as e:
         print(e)
 
