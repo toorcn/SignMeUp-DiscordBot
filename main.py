@@ -11,7 +11,7 @@ import globalVar
 load_dotenv()
 
 client = commands.Bot(command_prefix = "/", intents = discord.Intents.default())
-version = '1.2.1'
+version = '1.2.1.1'
 
 @client.event
 async def on_ready():
@@ -28,7 +28,7 @@ async def on_ready():
 @client.tree.command(name = "help")
 async def help(interaction: discord.Interaction):
     if (interaction.channel.name == os.getenv('Channel_name_1')):
-        await interaction.response.send_message(f'\n> First time? /setign <GAME TAG>\n> To join: /join <XXXX/X>\n> - Example: /join DIAM/2\n> To unjoin: /unjoin\n> To view a list: /list\n> If a manual edit has been made: /refreshlist', ephemeral=True)
+        await interaction.response.send_message(f'\n> First time? /settag <GAME TAG>\n> To join: /join <XXXX/X>\n> - Example: /join DIAM/2\n> To unjoin: /unjoin\n> To view a list: /list\n> If a manual edit has been made: /refreshlist', ephemeral=True)
 
 @client.tree.command(name = "list")
 async def list(interaction: discord.Interaction):
@@ -60,14 +60,14 @@ async def join(interaction: discord.Interaction, current_rank: str):
                 # message = '> You have already joined the list, to amend your entry first use /unjoin'
                 await interaction.response.send_message('> You have already joined the list, to amend your entry first use /unjoin', ephemeral=True)
         else:
-            # message = '> You have not registered your in-game ID, please use /setign <GAME TAG>'
-            await interaction.response.send_message('> You have not registered your in-game ID, please use /setign <GAME TAG>', ephemeral=True)
+            # message = '> You have not registered your in-game ID, please use /settag <GAME TAG>'
+            await interaction.response.send_message('> You have not registered your in-game ID, please use /settag <GAME TAG>', ephemeral=True)
         # await interaction.response.send_message(message, ephemeral=True)
         # check if user has set ign if not, refer
 
-@client.tree.command(name = "setign")
+@client.tree.command(name = "settag")
 @app_commands.describe(in_game_tag = "FLOPPER#1234")
-async def setign(interaction: discord.Interaction, in_game_tag: str):
+async def settag(interaction: discord.Interaction, in_game_tag: str):
     if (interaction.channel.name == os.getenv('Channel_name_1')):
         discord_id = str(interaction.user.id)
         saveResponse = integrator.saveIGN(discord_id, in_game_tag)
