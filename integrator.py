@@ -2,6 +2,7 @@ import googleAuth
 import spreadsheetread
 import spreadsheetwrite
 import globalVar
+import re
 
 def getLatestRow(sheet_id):
     sheet_list = spreadsheetread.run(sheet_id, f'A2:D300')
@@ -14,7 +15,7 @@ def showListSigned():
     counter = 0
     spacer_counter = 0
     # RVI = rank value
-    output = 'IND.  DISCORD  GAME  RANK  RVI\n'
+    output = 'IND.  DISCORD     GAME  RANK  RVI\n'
     for row in sheet_list:
         message = ''
         counter += 1
@@ -60,7 +61,8 @@ def saveIGN(discord_id, in_game_tag):
 
 async def joinList(discord_id, rank, discord_username):
     get_IGN = getIGN(discord_id)
-    rank_data = str(rank).split('/')
+    # rank_data = str(rank).split('/')
+    rank_data = re.split('/| ', str(rank))
     rank_division = str(rank_data[0].upper())[:4]
     rank_entry = -1
     rank_tier = 0
@@ -126,9 +128,11 @@ async def unjoinFromList(discord_username):
     # print(f'get list row {getRow(globalVar.DEF_id, discord_username)}')
     entry = []
     try:
-        entry = ['UNJOINED', row_data[0][1], row_data[0][2], row_data[0][3]]
+        # entry = ['UNJOINED', row_data[0][1], row_data[0][2], row_data[0][3]]
+        entry = ['', '', '', '']
     except: 
-        entry = ['UNJOINED', row_data[0][1], row_data[0][2]]
+        # entry = ['UNJOINED', row_data[0][1], row_data[0][2]]
+        entry = ['', '', '']
     spreadsheetwrite.setRow(globalVar.DEF_id, entry, row)
     return True
 
