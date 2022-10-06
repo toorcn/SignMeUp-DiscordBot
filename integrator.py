@@ -3,29 +3,74 @@ import spreadsheetread
 import spreadsheetwrite
 import globalVar
 import re
+import discord
 
 def getLatestRow(sheet_id):
     sheet_list = spreadsheetread.run(sheet_id, f'A2:D300')
     return len(sheet_list) + 2
 
-def showListSigned():
+def showListSigned(interaction):
     if (globalVar.current_row_num_DEF == 2):
-        return 'No one signed up yet.'
+        return '`No one signed up yet.`'
     sheet_list = spreadsheetread.run(globalVar.DEF_id, f'A2:D{globalVar.current_row_num_DEF}')
-    counter = 0
-    spacer_counter = 0
-    # RVI = rank value
-    output = 'IND.  DISCORD     GAME  RANK  RVI\n'
-    for row in sheet_list:
-        message = ''
-        counter += 1
-        for items in row:
-            message += f'{items} '
-        output += f'{counter}. {message}\n'
-        if (counter == spacer_counter + 10):
-            spacer_counter += 10
-            output += '\n'
-    return output
+    index_embed_string, game_embed_string, rank_embed_string = '', '', ''
+    valid_counter = 0
+    for entry in sheet_list:
+        if (entry == []):
+            continue
+        spacer_nextln = ''
+        index = valid_counter + 1
+        if (valid_counter % 5 == 0):
+            spacer_nextln = '\n'
+        game_tag = entry[1]
+        try:
+            RVI = int(entry[3])
+        except:
+            RVI = 0
+        game_rank = ''
+        if (RVI >= 1 and RVI <= 3):
+            game_rank = 'Iron'
+        if (RVI >= 4 and RVI <= 6):
+            game_rank = 'Bronze'
+        if (RVI >= 7 and RVI <= 9):
+            game_rank = 'Silver'
+        if (RVI >= 10 and RVI <= 12):
+            game_rank = 'Gold'
+        if (RVI >= 13 and RVI <= 15):
+            game_rank = 'Platinum'
+        if (RVI >= 16 and RVI <= 18):
+            game_rank = 'Diamond'
+        if (RVI >= 19 and RVI <= 21):
+            game_rank = 'Ascendant'
+        if (RVI >= 22 and RVI <= 24):
+            game_rank = 'Immortal'
+        if ((RVI+2) % 3 == 0):
+            game_rank += ' I'
+        if ((RVI+1) % 3 == 0):
+            game_rank += ' II'
+        if (RVI % 3 == 0):
+            game_rank += ' III'
+        if (RVI == 25):
+            game_rank = 'Lord Radiant'    
+        if (RVI == 0):
+            game_rank = 'Unranked'
+        # game_rank = entry[2]
+
+        index_embed_string += f'{spacer_nextln}{index})\n'
+        game_embed_string += f'{spacer_nextln}{game_tag}\n'
+        rank_embed_string += f'{spacer_nextln}{game_rank}\n'
+        # rank_embed_string += f'{spacer_nextln}{game_rank}\n'
+        valid_counter += 1
+
+    embed = discord.Embed(title="__*Valorant Game Night List  (Wednesday, 9PM)*__", color=0xff4655, timestamp=interaction.created_at)
+    embed.add_field(name='**Num**', value=index_embed_string, inline=True)
+    embed.add_field(name='**Game Tag**', value=game_embed_string, inline=True)
+    embed.add_field(name='**Rank**', value=rank_embed_string, inline=True)
+    return embed
+    # discord_embed_string = ''
+    # discord_tag = entry[0]
+    # discord_embed_string += f'{discord_tag}\n'
+    # embed.add_field(name=f'**Discord Tag**', value=discord_embed_string, inline=True)
 
 def getRow(sheet_id, discord_id):
     end_var = 0
@@ -63,7 +108,7 @@ async def joinList(discord_id, rank, discord_username):
     get_IGN = getIGN(discord_id)
     # rank_data = str(rank).split('/')
     rank_data = re.split('/| ', str(rank))
-    rank_division = str(rank_data[0].upper())[:4]
+    rank_division = str(rank_data[0].upper())[:2]
     rank_entry = -1
     rank_tier = 0
     skip_add = False
@@ -71,23 +116,23 @@ async def joinList(discord_id, rank, discord_username):
         rank_tier = str(rank_data[1])[:1]
     except:
         rank_tier
-    if (rank_division == 'IRON'):
+    if (rank_division == 'IR'):
         rank_entry += 1
-    if (rank_division == 'BRON'):
+    if (rank_division == 'BR'):
         rank_entry += 4
-    if (rank_division == 'SILV'):
+    if (rank_division == 'SI'):
         rank_entry += 7
-    if (rank_division == 'GOLD'):
+    if (rank_division == 'GO'):
         rank_entry += 10
-    if (rank_division == 'PLAT'):
+    if (rank_division == 'PL'):
         rank_entry += 13
-    if (rank_division == 'DIAM'):
+    if (rank_division == 'DI'):
         rank_entry += 16
-    if (rank_division == 'ASCE'):
+    if (rank_division == 'AS'):
         rank_entry += 19
-    if (rank_division == 'IMMO'):
+    if (rank_division == 'IM'):
         rank_entry += 22
-    if (rank_division == 'RADI'):
+    if (rank_division == 'RA'):
         rank_entry = 26
         skip_add = True
     if (rank_entry < 0):

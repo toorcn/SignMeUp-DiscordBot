@@ -11,7 +11,7 @@ import globalVar
 load_dotenv()
 
 client = commands.Bot(command_prefix = "/", intents = discord.Intents.default())
-version = '1.3.1'
+version = 'Alpha 1.5'
 
 @client.event
 async def on_ready():
@@ -22,28 +22,29 @@ async def on_ready():
         integrator.initialize()
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Sushi code!"))
         channel = client.get_channel(int(os.getenv('Start_channel_id')))        
-        await channel.send(f'SignMeUp Alpha {version} (VALORANT) is ready!\nHow to join Valorant Game Night:\n> First time? /settag cat poop#0102\n> (once or when tag change)\n> To join: /join XXXX/X\n> (first 4 letters of your rank/tier)\n> - Example: /join SILV/2\n> To unjoin: /unjoin\n> To see list: /list\n> For more information: /help')   
+        await channel.send(f'SignMeUp {version} (VALORANT) is ready!\nHow to join Valorant Game Night:\n> First time? /settag catpoop#0102\n> (once or when tag change)\n> To join: /join <rank/tier>\n> - Example: /join silv 2\n> To unjoin: /unjoin\n> To view list: /list\n> For more information: /help')   
     except Exception as e:
         print(e)
 
 @client.tree.command(name = "help")
 async def help(interaction: discord.Interaction):
     if (interaction.channel.name == os.getenv('Channel_name_1')):
-        await interaction.response.send_message(f'\n> First time? /settag <GAME TAG>\n> To join: /join <XXXX/X>\n> - Example: /join DIAM/2\n> To unjoin: /unjoin\n> To view a list: /list', ephemeral=True)
-        print("COMMAND help used")
+        await interaction.response.send_message(f'\n> Start: /settag <GAME TAG>\n> (one time only)\n> To join: /join <rank/tier>\n> - Example: /join plat 2\n> To unjoin: /unjoin\n> To view list: /list', ephemeral=True)
+        print(f"({interaction.created_at}) <{interaction.user.display_name}> used /help")
 
 @client.tree.command(name = "list")
 async def list(interaction: discord.Interaction):
     if (interaction.channel.name == os.getenv('Channel_name_1')):
-        await interaction.response.send_message(f'```{integrator.showListSigned()}```')
-        print("COMMAND list used")
+        await interaction.response.send_message(embed=integrator.showListSigned(interaction))
+        print(f"({interaction.created_at}) <{interaction.user.display_name}> used /list")
 
 @client.tree.command(name = "refreshlist")
 async def refreshlist(interaction: discord.Interaction):
+    # check user ID for admin use
     if (interaction.channel.name == os.getenv('Channel_name_1')):
         integrator.initialize()
-        await interaction.response.send_message('> Fresh success!')
-        print("COMMAND refresh used")
+        await interaction.response.send_message('> Fresh success!', ephemeral=True)
+        print(f"({interaction.created_at}) <{interaction.user.display_name}> used /refreshlist")
 
 @client.tree.command(name = "join")
 @app_commands.describe(current_rank = "be honest, for fair play")
@@ -59,7 +60,7 @@ async def join(interaction: discord.Interaction, current_rank: str):
                 # message = f'> You have joined the list! as #{globalVar.current_row_num_DEF - 1}'
                 await interaction.followup.send(f'> You have joined the list! as #{globalVar.current_row_num_DEF - 1}')
                 await integrator.joinList(discord_id, current_rank, discord_username)
-                await client.get_channel(int(os.getenv('Start_channel_id'))).send(f'> ({integrator.getIGN(discord_id)} JOIN) Player count -> #{integrator.getPlayerCount()}')
+                await client.get_channel(interaction.channel_id).send(f'> ({integrator.getIGN(discord_id)} JOIN) Player count -> #{integrator.getPlayerCount()}')
                 # test if rank is valud
             else: 
                 # message = '> You have already joined the list, to amend your entry first use /unjoin'
@@ -69,10 +70,10 @@ async def join(interaction: discord.Interaction, current_rank: str):
             await interaction.followup.send('> You have not registered your in-game ID, please use /settag <GAME TAG>')
         # await interaction.response.send_message(message, ephemeral=True)
         # check if user has set ign if not, refer
-        print(f"COMMAND join used - {discord_username}")
+        print(f"({interaction.created_at}) <{interaction.user.display_name}> used /join {current_rank}")
 
 @client.tree.command(name = "settag")
-@app_commands.describe(in_game_tag = "FLOPPER#1234")
+@app_commands.describe(in_game_tag = "In-Game tag E.g. Hopper#1234")
 async def settag(interaction: discord.Interaction, in_game_tag: str):
     if (interaction.channel.name == os.getenv('Channel_name_1')):
         await interaction.response.defer(ephemeral=True)
@@ -84,7 +85,7 @@ async def settag(interaction: discord.Interaction, in_game_tag: str):
         else:
             msg = 'Changed! if you have joined a list, please unjoin and join again.'
         await interaction.followup.send(f"> {msg}\n> ign: {in_game_tag} -LINK TO- id: {discord_id}")
-        print(f"COMMAND settag used - {in_game_tag}")
+        print(f"({interaction.created_at}) <{interaction.user.display_name}> used /settag {in_game_tag}")
 
 @client.tree.command(name = "unjoin")
 async def unjoin(interaction: discord.Interaction):
@@ -102,8 +103,8 @@ async def unjoin(interaction: discord.Interaction):
         # await interaction.response.send_message(f'> {message}', ephemeral=True) 
         await interaction.followup.send(f'> {message}');
         if (message == 'You have unjoined!'):
-            await client.get_channel(int(os.getenv('Start_channel_id'))).send(f'> ({integrator.getIGN(discord_id)} UNJOINED) Player count -> #{integrator.getPlayerCount()}')
-        print(f"COMMAND unjoin used - {discord_username}")
+            await client.get_channel(interaction.channel_id).send(f'> ({integrator.getIGN(discord_id)} UNJOINED) Player count -> #{integrator.getPlayerCount()}')
+        print(f"({interaction.created_at}) <{interaction.user.display_name}> used /unjoin")
 
 # @client.tree.command(name = "setrank")
 # @app_commands.describe(rank = "Iron, Bronze, Silver, Gold, Platinum, Diamond, Ascendant, Immortal", tier = "1, 2, 3")
