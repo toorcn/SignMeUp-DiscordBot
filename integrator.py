@@ -9,9 +9,10 @@ def getLatestRow(sheet_id):
     sheet_list = spreadsheetread.run(sheet_id, f'A2:D300')
     return len(sheet_list) + 2
 
-def showListSigned(interaction):
+def showListSigned(interaction, mobile):
     if (globalVar.current_row_num_DEF == 2):
-        return '`No one signed up yet.`'
+        embed = discord.Embed(title='> No one signed up yet. Be the first! /join', color=0xFFFFFF, timestamp=interaction.created_at)
+        return embed
     sheet_list = spreadsheetread.run(globalVar.DEF_id, f'A2:D{globalVar.current_row_num_DEF}')
     index_embed_string, game_embed_string, rank_embed_string = '', '', ''
     valid_counter = 0
@@ -57,15 +58,17 @@ def showListSigned(interaction):
         # game_rank = entry[2]
 
         index_embed_string += f'{spacer_nextln}{index})\n'
-        game_embed_string += f'{spacer_nextln}{game_tag}\n'
+        game_embed_string += f'{spacer_nextln}> {game_tag}\n'
         rank_embed_string += f'{spacer_nextln}{game_rank}\n'
         # rank_embed_string += f'{spacer_nextln}{game_rank}\n'
         valid_counter += 1
-
+    # https://stackoverflow.com/questions/63565825/how-to-make-data-to-be-shown-in-tabular-form-in-discord-py
     embed = discord.Embed(title="__*Valorant Game Night List  (Wednesday, 9PM)*__", color=0xff4655, timestamp=interaction.created_at)
-    embed.add_field(name='**Num**', value=index_embed_string, inline=True)
-    embed.add_field(name='**Game Tag**', value=game_embed_string, inline=True)
-    embed.add_field(name='**Rank**', value=rank_embed_string, inline=True)
+    if (not mobile):
+        embed.add_field(name='Num', value=index_embed_string, inline=True)
+    embed.add_field(name='Game Tag', value=game_embed_string, inline=True)
+    if (not mobile):
+        embed.add_field(name='Rank', value=rank_embed_string, inline=True)
     return embed
     # discord_embed_string = ''
     # discord_tag = entry[0]

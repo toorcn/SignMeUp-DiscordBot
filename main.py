@@ -20,9 +20,10 @@ async def on_ready():
         synced = await client.tree.sync()
         print("Bot is synced!")
         integrator.initialize()
+        # https://stackoverflow.com/questions/59126137/how-to-change-activity-of-a-discord-py-bot
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Sushi code!"))
         channel = client.get_channel(int(os.getenv('Start_channel_id')))        
-        await channel.send(f'SignMeUp {version} (VALORANT) is ready!\nHow to join Valorant Game Night:\n> First time? /settag catpoop#0102\n> (once or when tag change)\n> To join: /join <rank/tier>\n> - Example: /join silv 2\n> To unjoin: /unjoin\n> To view list: /list\n> For more information: /help')   
+        # await channel.send(f'SignMeUp {version} (VALORANT) is ready!\nHow to join Valorant Game Night:\n> First time? /settag catpoop#0102\n> (once or when tag change)\n> To join: /join <rank/tier>\n> - Example: /join silv 2\n> To unjoin: /unjoin\n> To view list: /list\n> For more information: /help')   
     except Exception as e:
         print(e)
 
@@ -33,10 +34,13 @@ async def help(interaction: discord.Interaction):
         print(f"({interaction.created_at}) <{interaction.user.display_name}> used /help")
 
 @client.tree.command(name = "list")
-async def list(interaction: discord.Interaction):
+@app_commands.describe(mobile = "m")
+async def list(interaction: discord.Interaction, mobile: bool=False):
     if (interaction.channel.name == os.getenv('Channel_name_1')):
-        await interaction.response.send_message(embed=integrator.showListSigned(interaction))
-        print(f"({interaction.created_at}) <{interaction.user.display_name}> used /list")
+        await interaction.response.defer()
+        embed = integrator.showListSigned(interaction, mobile)
+        await interaction.followup.send(embed=embed)
+        print(f"({interaction.created_at}) <{interaction.user.display_name}> used /list {mobile}")
 
 @client.tree.command(name = "refreshlist")
 async def refreshlist(interaction: discord.Interaction):
